@@ -1,4 +1,4 @@
-import { Link, useNavigate } from "react-router-dom";
+import { Link, Navigate, useNavigate } from "react-router-dom";
 import { Button } from "../ui/button";
 import {
   DialogDescription,
@@ -17,8 +17,8 @@ import toast, { Toaster } from 'react-hot-toast';
 
 const notifyLoggedIn = () => toast.success('Logged in successfully')
 
-
 const LoginDialog = () => {
+  const navigate = useNavigate();
   const [userEmail, setUserEmail] = useState("");
   const [password, setPassword] = useState("");
   const [formError, setFormError] = useState("");
@@ -39,7 +39,7 @@ const LoginDialog = () => {
       }
       setFormError("");
       notifyLoggedIn();
-      <Toaster />
+      navigate("/accounts/profile/");
     }catch(error: any){
       if(error.status === 401){
         setFormError("Try to logout and login again")

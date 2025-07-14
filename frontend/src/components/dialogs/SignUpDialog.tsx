@@ -1,7 +1,6 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Button } from "../ui/button";
 import {
-  DialogClose,
   DialogDescription,
   DialogFooter,
   DialogHeader,
@@ -12,12 +11,13 @@ import { Label } from "../ui/label";
 import { useState, type FormEvent } from "react";
 import api from "@/axios/axios";
 import { ACCESS_TOKEN, REFRESH_TOKEN } from "@/constants";
-import toast, { Toaster } from "react-hot-toast";
+import toast from "react-hot-toast";
 import { Loader } from "lucide-react";
 
 const notifyLoggedIn = () => toast.success('Logged in successfully');
 
 const SignUpDialog = () => {
+  const navigate = useNavigate();
   const [username, setUsername] = useState("");
   const [userEmail, setUserEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -36,7 +36,7 @@ const SignUpDialog = () => {
 
     const route_url = "/accounts/register/";
     try{
-      const res = await api.post(route_url, {email:userEmail, password:password});
+      const res = await api.post(route_url, {email:userEmail, password:password, password2:rePassword});
       if(res.status === 200){
         localStorage.setItem(ACCESS_TOKEN, res.data.content.access_token);
         localStorage.setItem(REFRESH_TOKEN, res.data.content.refresh_token);
@@ -46,7 +46,7 @@ const SignUpDialog = () => {
       }
       setFormError("");
       notifyLoggedIn();
-      <Toaster />
+      navigate("/accounts/profile/");
     }catch(error: any){
       if(error.status === 401){
         setFormError("Try to logout and then create new account")
