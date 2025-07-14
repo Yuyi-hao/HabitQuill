@@ -1,9 +1,9 @@
 import { ArrowRightFromLine, Home, LeafIcon, Pen, SquareLibrary, UserPlus } from "lucide-react";
 import { Button } from "./ui/button";
-import LoginDialog from "./dialogs/Logindailog";
 import { Dialog, DialogContent, DialogTrigger } from "./ui/dialog";
 import SignUpDialog from "./dialogs/SignUpDialog";
 import { Link } from "react-router-dom";
+import LoginDialog from "./dialogs/LoginDailog";
 
 const TopBar = () => {
     return (
@@ -25,36 +25,34 @@ const TopBar = () => {
                 <Button className="bg-primary hover:bg-[#d99539] text-black font-medium">
                 <SquareLibrary className="mr-2 size-4" /> Demo
                 </Button>
-                <Button className="bg-primary hover:bg-[#d99539] text-black font-medium">
-                <LeafIcon className="mr-2 size-4" /> About
-                </Button>
+                <Link to={"/about"}>
+                    <Button className="bg-primary hover:bg-[#d99539] text-black font-medium">
+                        <LeafIcon className="mr-2 size-4" /> About
+                    </Button>
+                </Link>
             </div>
 
             {/* Auth Buttons */}
             <div className="flex items-center gap-4">
                 <Dialog>
-                    <form>
-                        <DialogTrigger asChild>
-                            <Button className="bg-transparent border border-[#e6a756] text-[#e6a756] hover:bg-primary hover:text-black font-medium">
-                                <ArrowRightFromLine className="size-4 mr-2" /> Login
-                            </Button>
-                        </DialogTrigger>
-                        <DialogContent>
-                            <LoginDialog/>
-                        </DialogContent>
-                    </form>
+                    <DialogTrigger asChild>
+                        <Button className="bg-transparent border border-[#e6a756] text-[#e6a756] hover:bg-primary hover:text-black font-medium">
+                            <ArrowRightFromLine className="size-4 mr-2" /> Login
+                        </Button>
+                    </DialogTrigger>
+                    <DialogContent>
+                        <LoginDialog/>
+                    </DialogContent>
                 </Dialog>
                 <Dialog>
-                    <form>
-                        <DialogTrigger asChild>
-                            <Button className="bg-primary hover:bg-[#d99539] text-black font-medium">
-                                <UserPlus className="size-4 mr-2" /> Register
-                            </Button>
-                        </DialogTrigger>
-                        <DialogContent>
-                            <SignUpDialog/>
-                        </DialogContent>
-                    </form>
+                    <DialogTrigger asChild>
+                        <Button className="bg-primary hover:bg-[#d99539] text-black font-medium">
+                            <UserPlus className="size-4 mr-2" /> Register
+                        </Button>
+                    </DialogTrigger>
+                    <DialogContent>
+                        <SignUpDialog/>
+                    </DialogContent>
                 </Dialog>
                 
             </div>

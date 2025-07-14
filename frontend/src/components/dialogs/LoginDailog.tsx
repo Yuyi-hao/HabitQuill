@@ -1,7 +1,6 @@
-import { Link } from "react-router-dom";
+import { Link, Navigate, useNavigate } from "react-router-dom";
 import { Button } from "../ui/button";
 import {
-  DialogClose,
   DialogDescription,
   DialogFooter,
   DialogHeader,
@@ -9,10 +8,54 @@ import {
 } from "../ui/dialog";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
+import api from "@/axios/axios";
+import { useState, type FormEvent } from "react";
+import { ACCESS_TOKEN, REFRESH_TOKEN } from "@/constants";
+import { Loader } from "lucide-react";
+import toast, { Toaster } from 'react-hot-toast';
+
+
+const notifyLoggedIn = () => toast.success('Logged in successfully')
 
 const LoginDialog = () => {
+  const navigate = useNavigate();
+  const [userEmail, setUserEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [formError, setFormError] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleSubmit = async (event:FormEvent<HTMLFormElement>) => {
+    setIsLoading(true);
+    event.preventDefault();
+    const route_url = "/accounts/login/";
+    try{
+      const res = await api.post(route_url, {email:userEmail, password:password});
+      if(res.status === 200){
+        localStorage.setItem(ACCESS_TOKEN, res.data.content.access_token);
+        localStorage.setItem(REFRESH_TOKEN, res.data.content.refresh_token);
+      }
+      else{
+        setFormError(res.data.message);
+      }
+      setFormError("");
+      notifyLoggedIn();
+      navigate("/accounts/profile/");
+    }catch(error: any){
+      if(error.status === 401){
+        setFormError("Try to logout and login again")
+      }else{
+        setFormError(error.response.data.message);
+      }
+    }
+    finally{
+      setIsLoading(false);
+    }
+  }
+
   return (
     <>
+    <form onSubmit={handleSubmit}>
+
       <DialogHeader className="text-center space-y-1">
         <DialogTitle className="text-2xl font-bold">Login</DialogTitle>
         <DialogDescription className="text-muted-foreground">
@@ -23,12 +66,13 @@ const LoginDialog = () => {
       <div className="flex flex-col gap-4 mt-6">
         <div>
           <Label htmlFor="email">Email</Label>
-          <Input type="email" id="email" required />
+          <Input type="email" id="email" required value={userEmail} onChange={(e) => setUserEmail(e.target.value)}/>
         </div>
         <div>
           <Label htmlFor="password">Password</Label>
-          <Input type="password" id="password" required />
+          <Input type="password" id="password" required value={password} onChange={(e) => setPassword(e.target.value)}/>
         </div>
+          {formError && <p className="text-sm text-red-600 mt-1">{formError}</p>}
       </div>
 
       <div className="text-center mt-4 text-sm text-muted-foreground">
@@ -39,16 +83,14 @@ const LoginDialog = () => {
       </div>
 
       <DialogFooter className="mt-6">
-        <DialogClose asChild>
-          <Button variant="outline">Cancel</Button>
-        </DialogClose>
         <Button
           type="submit"
-          className="bg-primary text-primary-foreground hover:bg-primary/90 font-medium"
-        >
-          Login
+          className="w-full bg-primary text-primary-foreground hover:bg-primary/90 font-medium"
+          >
+            {isLoading?<Loader/>:"Login"}
         </Button>
       </DialogFooter>
+    </form>
     </>
   );
 };

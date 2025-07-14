@@ -2,24 +2,29 @@ import './App.css'
 import {Navigate, Route, Routes} from "react-router-dom";
 import NotFoundPage from './pages/404Page/NotFoundPage';
 import HomePage from './pages/home/HomePage';
-import AuthProvider from './provider/AuthProvider';
-import LoginDialog from './components/dialogs/Logindailog';
-import AuthDialogWrapper from './provider/AuthDIalogTrigger';
+import AboutPage from './pages/about/AboutPage';
+import toast from 'react-hot-toast';
+import UserProfilePage from './pages/userProfile/UserProfilePage';
 
-function LogoutUser(){
-  localStorage.clear()
-  return <Navigate to="/accounts/login"/>
+const notifyLoggedOut = () => toast.success('Logged out successfully')
+
+
+const LogoutUser = () => {
+  localStorage.clear();
+  notifyLoggedOut();
+  return <><Navigate to={"/"}/></>
 }
 
 function App() {
   return (
     <>
-     <AuthProvider>
       <Routes>
         <Route path="/" element={<HomePage />} />
+        <Route path="/about" element={<AboutPage />} />
         <Route path="*" element={<NotFoundPage />} />
+        <Route path='/logout' element={<LogoutUser/>}/>
+        <Route path='accounts/profile' element={<UserProfilePage/>}/>
       </Routes>
-    </AuthProvider>
     </>
   )
 }
